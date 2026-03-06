@@ -1,2 +1,11 @@
 requests>=2.31.0
 python-dotenv>=1.0.1
+optimade[http_client]
+httpx
+matplotlib
+pymatgen
+matminer
+scikit-learn
+pyarrow
+networkx
+pyvis
