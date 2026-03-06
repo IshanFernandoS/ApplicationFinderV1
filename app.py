@@ -1197,14 +1197,12 @@ def _rgba_str(rgb: Tuple[int, int, int], alpha: float) -> str:
 
 def _similarity_edge_style(similarity: float, base_width: float = 6.0, width_gain: float = 10.0) -> Dict[str, Any]:
     sim = max(0.0, min(1.0, float(similarity or 0.0)))
-    # Brighter, higher-contrast map for black backgrounds:
-    # low similarity -> vivid magenta/red, high similarity -> bright cyan
-    low_rgb = _hex_to_rgb('#FF4D6D')
-    high_rgb = _hex_to_rgb('#00E5FF')
+    low_rgb = _hex_to_rgb('#440154')
+    high_rgb = _hex_to_rgb('#FDE725')
     rgb = _blend_rgb(low_rgb, high_rgb, sim)
     length = max(35, int(700 - 620 * sim))
     width = base_width + width_gain * sim
-    opacity = 0.78 + 0.20 * sim
+    opacity = 0.52 + 0.40 * sim
     return {
         'sim': sim,
         'rgb': rgb,
@@ -1217,11 +1215,11 @@ def _similarity_edge_style(similarity: float, base_width: float = 6.0, width_gai
 def _node_palette(role: str, strength: float = 0.6) -> str:
     strength = max(0.0, min(1.0, float(strength or 0.0)))
     if role == 'center':
-        a, b = _hex_to_rgb('#FFD166'), _hex_to_rgb('#FF9F1C')
+        a, b = _hex_to_rgb('#FDE725'), _hex_to_rgb('#5EC962')
     elif role == 'neighbor':
-        a, b = _hex_to_rgb('#4CC9F0'), _hex_to_rgb('#00E5FF')
+        a, b = _hex_to_rgb('#3B528B'), _hex_to_rgb('#21918C')
     else:
-        a, b = _hex_to_rgb('#C77DFF'), _hex_to_rgb('#80FFDB')
+        a, b = _hex_to_rgb('#440154'), _hex_to_rgb('#5DC863')
     return '#' + ''.join(f'{c:02X}' for c in _blend_rgb(a, b, strength))
 
 def _render_pyvis_graph(net: Network, title: str, height: int = 480) -> None:
@@ -1294,7 +1292,7 @@ def show_material_network_graph(center: str, neighbors: List[Dict[str, Any]], ti
     net.set_options("""
     var options = {
       "nodes": {"shape": "dot", "font": {"size": 18, "strokeWidth": 0}},
-      "edges": {"smooth": false, "arrows": false, "scaling": {"min": 1, "max": 10}},
+      "edges": {"smooth": false, "arrows": {"to": {"enabled": false}}, "scaling": {"min": 1, "max": 10}},
       "interaction": {
         "hover": true,
         "tooltipDelay": 120,
@@ -1320,14 +1318,14 @@ def show_application_evidence_graph(
 ) -> None:
     center = format_material_name_generic(center)
     neighbors = _normalize_neighbor_labels(neighbors)
-    net = Network(height="640px", width="100%", bgcolor="#0E1117", font_color="white", directed=False)
+    net = Network(height="640px", width="100%", bgcolor="#0E1117", font_color="white", directed=True)
     net.set_options("""
     var options = {
       "layout": {"hierarchical": {"enabled": true, "direction": "LR", "sortMethod": "directed", "nodeSpacing": 220, "levelSeparation": 260}},
       "nodes": {"shape": "dot", "font": {"size": 16, "strokeWidth": 0}},
       "edges": {
         "smooth": {"enabled": true, "type": "cubicBezier", "roundness": 0.3},
-        "arrows": false,
+        "arrows": {"to": {"enabled": false}},
         "scaling": {"min": 1, "max": 14}
       },
       "interaction": {
